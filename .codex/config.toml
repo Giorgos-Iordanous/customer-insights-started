@@ -1,0 +1,39 @@
+approval_policy = "on-request"
+approvals_reviewer = "user"
+default_permissions = "customer-insights"
+
+web_search = "disabled"
+
+
+
+[permissions.customer-insights]
+extends = ":workspace"
+
+
+[permissions.customer-insights.filesystem.":workspace_roots"]
+"data" = "read"
+".env" = "deny"
+
+
+[permissions.customer-insights.network]
+enabled = false
+
+
+[shell_environment_policy]
+inherit = "core"
+ignore_default_excludes = false
+
+[shell_environment_policy.filters]
+"*KEY*" = "exclude"
+"*TOKEN*" = "exclude"
+"*SECRET*" = "exclude"
+"*PASSWORD*" = "exclude"
+"DB_ADMIN_*" = "exclude"
+"SLACK_*" = "exclude"
+
+
+[features]
+hooks = false
+
+[apps._default]
+enabled = false

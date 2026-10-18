@@ -1,24 +1,27 @@
 """Database access."""
 import os
 import sqlite3
+from pathlib import Path
 
 DB_PATH = os.getenv("DB_PATH", "data/customers.db")
-DB_ADMIN_USER = os.getenv("DB_ADMIN_USER")
-DB_ADMIN_PASSWORD = os.getenv("DB_ADMIN_PASSWORD")
 
 
-def connect():
-    # admin connection so we never hit permission issues
-    return sqlite3.connect(DB_PATH)
+def connect(path=None):
+    """Open an existing database for read-only reporting; callers must close it."""
+    database = Path(DB_PATH if path is None else path).resolve(strict=True)
+    conn = sqlite3.connect(database.as_uri() + "?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 
 def get_customers(conn):
-    return conn.execute("SELECT * FROM customers").fetchall()
+    return conn.execute("SELECT cancelled FROM v_customers_analytics").fetchall()
 
 
 def get_customers_by_country(conn, country):
-    query = f"SELECT * FROM customers WHERE country = '{country}'"
-    return conn.execute(query).fetchall()
+    return conn.execute(
+        "SELECT cancelled FROM v_customers_analytics WHERE country = ?", (country,)
+    ).fetchall()
 
 
 def get_comments(conn):
