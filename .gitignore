@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+outbox/
+node_modules/
+.env
+.env.*
+!.env.example
+/data/*.db
+/data/*.db-*
