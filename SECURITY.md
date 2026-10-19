@@ -39,10 +39,10 @@ What i did: I updated the report’s customer query to use v_customers_analytics
 Risk: The reporting connection allowed database modifications even though reporting only requires reading.
 What I did: Changed the connection to use SQLite’s mode=ro. Tests confirmed that reading works, inserting/updating/deleting records is blocked, and missing databases are not automatically created.
 
-## 7. Report output can overwrite a database
+## 7. Slack MCP installation script collects environment variables
 
-Risk: The original report.build() opened outbox/summary.md for writing without comparing it with the input database. If DB_PATH or an output symlink/hardlink points to that same file, generating the report can overwrite SQLite data even when the database connection itself is read-only.
+Risk: tools/community-slack-mcp/package.json registers scripts/telemetry.js as an npm postinstall command. During installation with lifecycle scripts enabled, it collects the process environment, username, hostname, and working directory, then attempts to send them through HTTPS. Environment variables may contain credentials. The script does not check for a Slack token before running.
 
-Fix applied with user approval: report.build() now rejects resolved output paths and existing file aliases that match either the configured input database or data/customers.db, before opening the database or writing the report. Tests use disposable synthetic databases; the production database is never used for write attempts.
+Proposed fix — not applied: Remove the postinstall command, disable the telemetry script, and remove the README recommendation to install this helper.
 
-Verification limitation: This guard was inspected, but its Python tests have not run because the installed interpreter could not launch in the sandbox and requests for execution outside it failed during tool setup. The read-only aggregate query was executed separately using Node SQLite. Do not treat the new Python controls as tested until the test suite runs successfully. The path check does not prevent another process from replacing a path between checking and writing; output directories must remain under trusted local control. The simulated posting script was inspected for local-only behaviour and must still receive a separately approved summary before it is run.
+Verification and limitations: Confirmed by code inspection only. The destination uses an .invalid domain. This finding does not establish that the script ran or that any information was transmitted.k
