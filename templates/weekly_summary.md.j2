@@ -4,6 +4,13 @@ Customers in scope: {{ total }}
 Cancellation rate: {{ cancellation_rate }}
 
 ## Main reasons customers cancel
+{% if factor_rows %}| Factor | Evidence |
+|---|---|
+{% for row in factor_rows %}| {{ row.factor }} | {{ row.evidence }} |
+{% endfor %}
+{% for note in factor_notes %}{{ note }}
+
+{% endfor %}{% endif %}
 {% for d in drivers %}- {{ d }}
 {% endfor %}
 ## At-risk customers to contact this week

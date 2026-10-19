@@ -19,9 +19,11 @@ def cancellation_rate(customers):
     return cancelled / total if total else None
 
 
-def cancellation_reasons(customers):
-    """Return the main factors associated with cancelling."""
-    raise NotImplementedError
+def cancellation_reasons(customers, comments, as_of=None):
+    """Return aggregate associations and issue tags, not proven causes."""
+    from .factors import analyse
+
+    return analyse(customers, comments, as_of=as_of)
 
 
 def at_risk_customers(customers, comments):

@@ -26,3 +26,16 @@ def get_customers_by_country(conn, country):
 
 def get_comments(conn):
     return conn.execute("SELECT * FROM support_comments").fetchall()
+
+
+def get_factor_customers(conn):
+    return conn.execute(
+        "SELECT customer_id, signup_date, cancelled, cancelled_date, "
+        "last_payment_status, support_tickets FROM v_customers_analytics"
+    ).fetchall()
+
+
+def get_factor_comments(conn):
+    return conn.execute(
+        "SELECT customer_id, created_at, comment_text FROM support_comments"
+    ).fetchall()
